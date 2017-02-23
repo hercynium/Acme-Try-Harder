@@ -1,10 +1,12 @@
 #!/usr/bin/env perl
-
+#
+# To get the filtered code, try this:
+#  perl -c -MFilter::ExtractSource test.pl | grep -v '^use Acme::Try::Harder;'
+#
 use strict;
 use warnings;
 use lib './lib';
-use Try::Tiny;
-use Try::Filter;
+use Acme::Try::Harder;
 use Data::Dumper;
 
 print "BEGIN\n";
@@ -16,7 +18,7 @@ sub foo {
     die "EXCEPTION\n";
   }
   catch {
-    print "CAUGHT: $_";
+    print "CAUGHT: $@";
     # should return this value from the sub
     return "YAAY!!"
   }
@@ -31,12 +33,12 @@ sub foo {
 }
 
 my $x = foo();
-print Dumper $x;
+print "RETURNED: " . Dumper $x;
 
+# returning from outside a sub makes no sense.
 try { print "TRYING AGAIN\n"; die "EXCEPTION\n" }
-catch { print "CAUGHT: $_"; return "YAAY!!!" }
-finally { print "FINALLY\n"; return "IMPOSSIBLE!" }
-
+catch { print "CAUGHT: $@" }
+finally { print "FINALLY\n" }
 
 print "END\n";
 
