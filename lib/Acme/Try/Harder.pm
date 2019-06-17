@@ -214,14 +214,75 @@ sub munge_code {
 1 && "This was an awful idea."; # truth
 __END__
 
+=head1 NAME
+ 
+C<Acme::Try::Harder> - Yet another pure-perl C<try/catch/finally> module
+ 
+=head1 SYNOPSIS
+ 
+ use Acme::Try::Harder;
+ 
+ # returns work as you would expect in other languages
+ sub foo
+ {
+    try {
+       attempt_a_thing();
+       return "success"; # returns from the sub
+    }
+    catch {
+       warn "It failed - $@";
+       return "failure";
+    }
+ }
+ 
+=head1 DESCRIPTION
+
+This module provides sane C<try/catch/finally> syntax for perl that is (mostly)
+semantically compatible with the syntax plugin L<Syntax::Keyword::Try>, but
+implemented in pure-perl using source filters. However, if you already have
+L<Syntax::Keyword::Try> installed it uses that instead.
+
+Please see the L<Syntax::Keyword::Try> documentation for usage and such.
+
+=head1 RATIONALE
+
+Sometimes you don't have a version of perl new enough to use
+L<Syntax::Keyword::Try>, but really want its nice syntax. Or
+perhaps you really need your code to be pure-perl for various
+reasons.
+
+=head1 CAVEATS
+
+This code implements a source filter, so all standard caveats with that apply.
+
+Also, while the C<try/catch/finally> syntax this code implements is B<mostly>
+the same as L<Syntax::Keyword::Try>, one thing stands out because I can see no
+way to implement it - the ability to use loop control statements inside a block
+that works with loops outside the block. To explain:
+
+  for my $x in (1..10) {
+    try {
+      do_something();
+    }
+    catch {
+      warn "oops: $@";
+      break; # doesn't work, nor does continue, next, redo, etc...
+    }
+  }
+
+Those who use L<Try::Tiny> won't miss this since it doesn't work there, either.
+
 =head1 TODO
 
-Write documentation...
+Test with L<fatpack>
 
 =head1 NOTES
 
 See the post-filtered code by running this:
 
     TRY_HARDER_USE_PP=1 perl -c -Ilib -MFilter::ExtractSource test.pl > transformed.pl
+
+This module tries very hard to not change the line-count of your code, so the
+generated code is *very* dense.
 
 =cut
