@@ -255,23 +255,6 @@ reasons.
 
 This code implements a source filter, so all standard caveats with that apply.
 
-Also, while the C<try/catch/finally> syntax this code implements is B<mostly>
-the same as L<Syntax::Keyword::Try>, one thing stands out because I can see no
-way to implement it - the ability to use loop control statements inside a block
-that works with loops outside the block. To explain:
-
-  for my $x in (1..10) {
-    try {
-      do_something();
-    }
-    catch {
-      warn "oops: $@";
-      break; # doesn't work, nor does continue, next, redo, etc...
-    }
-  }
-
-Those who use L<Try::Tiny> won't miss this since it doesn't work there, either.
-
 =head1 TODO
 
 Test with L<fatpack>
