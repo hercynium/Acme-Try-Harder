@@ -124,6 +124,8 @@ sub munge_code {
     if ( $kw eq 'try' ) {
       # found a try block, put everything in a new scope...
       $filtered_code .= ";{ ";
+      # wrap the try block in a do block... if we reach the end of the do block,
+      # we know return was never used in the do, so return a SENTINEL.
       $filtered_code .= "local \$$T = sub { do $code_block; return \$$S; };";
     }
     elsif ( $kw eq 'catch' ) {
@@ -140,15 +142,23 @@ sub munge_code {
     if ( $remainder !~ /\A \s* ( catch | finally ) \s* [{] /msx ) {
       # add the code all on one line to preserve the original numbering.
       $filtered_code .=
+          # init ERROR, DIED, RETVAL, and WANTARRAY
           "local ( \$$E, \$$D, \@$R ); local \$$W = wantarray; "
         . "{ "
         .   "local \$@; "
+            # if an exception is thrown, value of eval will be undef, stash in DIED
         .   "\$$D = not eval { "
+              # call TRY sub in appropriate context according to value of WANTARRAY
+              # capturing the return value in RETVAL
         .     "if ( \$$W ) { \@$R = &\$$T; } elsif ( defined \$$W ) { \$$R\[0] = &\$$T; } else { &\$$T; } "
+              # return 1 if no exception is thrown
         .     "return 1; "
         .   "}; "
+            # stash any exception in ERROR
         .   "\$$E = \$@; "
         . "}; "
+          # if DIED is true, and there's a CATCH sub, stash the ERROR in $@ and then
+          # call the CATCH sub in the apropriate context. Else, re-throw ERROR
         . "if ( \$$D ) { "
         .   "if ( \$$C ) { "
         .     "local \$@ = \$$E; "
@@ -156,6 +166,8 @@ sub munge_code {
         .   "} "
         .   "else { die \$$E } "
         . "}; "
+          # if in current scope caller is true, and RETVAL isn't a ref or a SENTINEL, we know
+          # that return was called in the code block, so return RETVAL in the apropriate context
         . "if ( caller() and (!ref(\$$R\[0]) or !\$$R\[0]->isa('$S')) ) { return \$$W ? \@$R : \$$R\[0]; } ";
 
       # close the scope opened when we first found the "try"
