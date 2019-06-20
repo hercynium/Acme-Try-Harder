@@ -5,7 +5,7 @@ use warnings;
 
 use Test::More;
 
-use Acme::Try::Harder;
+use Try::Harder;
 
 # finally does not disturb $@
 {

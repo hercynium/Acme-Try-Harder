@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-package Acme::Try::Harder;
+package Try::Harder;
 
 # ABSTRACT: Try hard to get the functionality of Syntax::Keyword::Try
 
@@ -188,7 +188,7 @@ sub munge_code {
 
 {
   package # hide from PAUSE
-    Acme::Try::Harder::ScopeGuard;
+    Try::Harder::ScopeGuard;
 
   # older versions of perl have an issue with $@ during global destruction
   use constant UNSTABLE_DOLLARAT => ("$]" < '5.013002') ? 1 : 0;
@@ -228,11 +228,11 @@ __END__
 
 =head1 NAME
  
-C<Acme::Try::Harder> - Yet another pure-perl C<try/catch/finally> module
+C<Try::Harder> - Yet another pure-perl C<try/catch/finally> module
  
 =head1 SYNOPSIS
  
- use Acme::Try::Harder;
+ use Try::Harder;
  
  # returns work as you would expect in other languages
  sub foo

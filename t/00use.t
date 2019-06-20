@@ -5,6 +5,6 @@ use warnings;
 
 use Test::More;
 
-use_ok( "Acme::Try::Harder" );
+use_ok( "Try::Harder" );
 
 done_testing;

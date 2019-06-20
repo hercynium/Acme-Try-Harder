@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
 #
 # To get the filtered code, try this:
-#  perl -c -MFilter::ExtractSource test.pl | grep -v '^use Acme::Try::Harder;'
+#  perl -c -MFilter::ExtractSource test.pl | grep -v '^use Try::Harder;'
 #
 use strict;
 use warnings;
 use lib './lib';
-use Acme::Try::Harder;
+use Try::Harder;
 use Data::Dumper;
 
 print "BEGIN\n";
